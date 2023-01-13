@@ -1,7 +1,4 @@
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.Scanner;
 
 public class DataBaseManagement {
@@ -38,8 +35,33 @@ public class DataBaseManagement {
             exception.printStackTrace();
         }
     }
+    public static void syncDetailsWithDatabase(){
+        Scanner scanner = new Scanner(System.in);
+           EmployeePayroll employeePayroll = new EmployeePayroll();
+            System.out.print("Enter name = ");
+            employeePayroll.setName(scanner.next());
+            try {
+                Connection connection = DriverManager.getConnection(url, userName, password);
+                String query = "select * from EmployeePayroll where name=?";
+                PreparedStatement prepare = connection.prepareStatement(query);
+                prepare.setString(1, employeePayroll.getName());
+                ResultSet result = prepare.executeQuery();
+                while (result.next()) {
+                    System.out.print("id = ");
+                    System.out.print(result.getString("id"));
+                    System.out.print("\nName = ");
+                    System.out.print(result.getString("name"));
+                    System.out.print("\nbasic Pay = ");
+                    System.out.print(result.getInt("basicpay"));
+                    System.out.println();
+                }
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
+    }
     public static void main(String[] args) {
         dataBaseManagement();
         updateSalary();
+        syncDetailsWithDatabase();
     }
 }
